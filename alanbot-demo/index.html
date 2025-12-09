@@ -6,27 +6,10 @@
   <title>AlanBot Demo</title>
 
   <!-- Chatbase embed -->
-<script src="https://www.chatbase.co/embed.min.js"
+  <script src="https://www.chatbase.co/embed.min.js"
   chatbotId="p_3L8r_Zfnj_PnD5M5xWT"
   domain="www.chatbase.co"
   defer>
-</script>
-
-<!-- Custom Tool -->
-<script>
-  window.chatbase("onReady", () => {
-    window.chatbase("registerTools", {
-      getTomorrowDay: async () => {
-        const tomorrow = new Date();
-        tomorrow.setDate(tomorrow.getDate() + 1);
-        const day = tomorrow.toLocaleDateString("en-US", { weekday: "long" });
-        return {
-          status: "success",
-          data: { tomorrow_day: day }
-        };
-      }
-    });
-  });
 </script>
 
   <style>
