@@ -7,10 +7,10 @@
 
   <!-- Chatbase embed -->
   <script src="https://www.chatbase.co/embed.min.js"
-  chatbotId="p_3L8r_Zfnj_PnD5M5xWT"
-  domain="www.chatbase.co"
-  defer>
-</script>
+    chatbotId="p_3L8r_Zfnj_PnD5M5xWT"
+    domain="www.chatbase.co"
+    defer>
+  </script>
 
   <style>
     body {
@@ -23,23 +23,121 @@
       color: #333;
     }
     h1 { font-size: 28px; }
-    p { margin-bottom: 20px; }
+    p  { margin-bottom: 20px; }
+
+    /* 👇 Add this for the sticky music control */
+    .music-toggle {
+      position: fixed;
+      bottom: 16px;
+      right: 16px;
+      z-index: 9999;
+      background: #111;
+      color: #fff;
+      border-radius: 999px;
+      padding: 6px 14px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      cursor: pointer;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.25);
+      user-select: none;
+    }
+    .music-toggle span.label {
+      letter-spacing: 0.08em;
+      font-weight: 600;
+    }
+    .music-toggle span.icon {
+      font-size: 16px;
+    }
   </style>
 </head>
 
 <body>
   <h1>Welcome to AlanBot 👋</h1>
-  <p>
-    This is a quick demo page to test <strong>AlanBot</strong> — a chatbot trained on my work,
-    my projects, and my general problem-solving brain. It’s like talking to a calmer,
-    more organized version of me who never loses track of a thought.
-  </p>
+  <p>Ask AlanBot anything about my support work, projects, or process.</p>
 
-  <p>
-    Ask it anything about my UX work, support background, design processes, résumé details,
-    or projects. Go ahead — give it a try!
-  </p>
+  <!-- 🔊 Background music audio element -->
+  <!-- Replace song1.mp3 / song2.mp3 with your real file paths -->
+  <audio id="bg-music" preload="auto"></audio>
 
-  <p><em>(The chat bubble should appear in the corner.)</em></p>
+  <!-- 🎵 Sticky MUSIC toggle -->
+  <div id="music-toggle" class="music-toggle">
+    <span class="icon" id="music-icon">🔇</span>
+    <span class="label">MUSIC</span>
+  </div>
+
+  <script>
+    // Simple playlist
+    const playlist = [
+      '/audio/song1.mp3',
+      '/audio/song2.mp3',
+      '/audio/song3.mp3'
+    ];
+
+    const audioEl    = document.getElementById('bg-music');
+    const toggleEl   = document.getElementById('music-toggle');
+    const iconEl     = document.getElementById('music-icon');
+    let currentTrack = 0;
+    let musicOn      = false;
+
+    function loadTrack(index) {
+      currentTrack = index % playlist.length;
+      audioEl.src = playlist[currentTrack];
+    }
+
+    function playMusic() {
+      if (!playlist.length) return;
+      if (!audioEl.src) loadTrack(0);
+
+      audioEl.play().then(() => {
+        musicOn = true;
+        iconEl.textContent = '🔊';
+      }).catch(() => {
+        // Browser blocked autoplay; user will have to tap the toggle again
+        musicOn = false;
+        iconEl.textContent = '🔇';
+      });
+    }
+
+    function pauseMusic() {
+      audioEl.pause();
+      musicOn = false;
+      iconEl.textContent = '🔇';
+    }
+
+    function nextTrack() {
+      loadTrack(currentTrack + 1);
+      if (musicOn) {
+        audioEl.play().catch(() => {
+          musicOn = false;
+          iconEl.textContent = '🔇';
+        });
+      }
+    }
+
+    // Loop through playlist
+    audioEl.addEventListener('ended', () => {
+      nextTrack();
+    });
+
+    // Toggle play/pause on click
+    toggleEl.addEventListener('click', () => {
+      if (musicOn) {
+        pauseMusic();
+      } else {
+        playMusic();
+      }
+    });
+
+    // Try to start quietly on first user interaction (autoplay rules)
+    window.addEventListener('click', function initOnce() {
+      // Only attempt once, after the very first user click anywhere
+      if (!musicOn) {
+        playMusic();
+      }
+      window.removeEventListener('click', initOnce);
+    });
+  </script>
 </body>
 </html>
