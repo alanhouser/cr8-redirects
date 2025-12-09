@@ -13,44 +13,101 @@
   </script>
 
   <style>
-    body {
-      font-family: Helvetica, Arial, sans-serif;
-      background: #fafafa;
-      padding: 40px;
-      max-width: 750px;
-      margin: auto;
-      line-height: 1.6;
-      color: #333;
-    }
-    h1 { font-size: 28px; }
-    p  { margin-bottom: 20px; }
+  body {
+    font-family: Helvetica, Arial, sans-serif;
+    background: #fafafa;
+    padding: 40px;
+    max-width: 750px;
+    margin: auto;
+    line-height: 1.6;
+    color: #333;
+  }
 
-    /* 👇 Add this for the sticky music control */
-    .music-toggle {
-      position: fixed;
-      bottom: 16px;
-      left: 16px;
-      z-index: 9999;
-      background: #111;
-      color: #fff;
-      border-radius: 999px;
-      padding: 6px 14px;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 13px;
-      cursor: pointer;
-      box-shadow: 0 6px 18px rgba(0,0,0,0.25);
-      user-select: none;
-    }
-    .music-toggle span.label {
-      letter-spacing: 0.08em;
-      font-weight: 600;
-    }
-    .music-toggle span.icon {
-      font-size: 16px;
-    }
-  </style>
+  h1 { font-size: 28px; }
+  p  { margin-bottom: 20px; }
+
+  /* 🎵 Sticky MUSIC pill */
+  .music-toggle {
+    position: fixed;
+    bottom: 16px;
+    left: 16px;              /* bottom-left like your screenshot */
+    z-index: 9999;
+    background: #000;
+    color: #fff;
+    border-radius: 999px;
+    padding: 8px 14px 8px 12px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    cursor: pointer;
+    box-shadow: 0 10px 24px rgba(0,0,0,0.3);
+    user-select: none;
+  }
+
+  .music-toggle span.icon {
+    font-size: 16px;
+    display: inline-flex;
+  }
+
+  .music-toggle span.label {
+    letter-spacing: 0.12em;
+    font-weight: 600;
+    text-transform: uppercase;
+  }
+
+  /* pulsing dots container */
+  .music-toggle .dots {
+    display: inline-flex;
+    gap: 3px;
+    margin-left: 2px;
+  }
+
+  .music-toggle .dots span {
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: #fff;
+    opacity: 0.2;
+    animation: pulseDot 1.1s infinite ease-in-out;
+    animation-play-state: paused;
+  }
+
+  .music-toggle .dots span:nth-child(2) {
+    animation-delay: 0.15s;
+  }
+
+  .music-toggle .dots span:nth-child(3) {
+    animation-delay: 0.3s;
+  }
+
+  /* only animate when playing */
+  .music-toggle.is-playing .dots span {
+    animation-play-state: running;
+    opacity: 0.75;
+  }
+
+  @keyframes pulseDot {
+    0%, 100% { transform: translateY(0); opacity: 0.25; }
+    50%      { transform: translateY(-3px); opacity: 1;   }
+  }
+
+  /* ⏭ skip button */
+  .music-skip {
+    border: none;
+    background: transparent;
+    color: #fff;
+    font-size: 16px;
+    display: inline-flex;
+    align-items: center;
+    padding: 0 0 0 4px;
+    cursor: pointer;
+  }
+
+  .music-skip:focus {
+    outline: none;
+  }
+</style>
 </head>
 
 <body>
