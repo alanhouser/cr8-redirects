@@ -13,101 +13,101 @@
   </script>
 
   <style>
-  body {
-    font-family: Helvetica, Arial, sans-serif;
-    background: #fafafa;
-    padding: 40px;
-    max-width: 750px;
-    margin: auto;
-    line-height: 1.6;
-    color: #333;
-  }
+    body {
+      font-family: Helvetica, Arial, sans-serif;
+      background: #fafafa;
+      padding: 40px;
+      max-width: 750px;
+      margin: auto;
+      line-height: 1.6;
+      color: #333;
+    }
 
-  h1 { font-size: 28px; }
-  p  { margin-bottom: 20px; }
+    h1 { font-size: 28px; }
+    p  { margin-bottom: 20px; }
 
-  /* 🎵 Sticky MUSIC pill */
-  .music-toggle {
-    position: fixed;
-    bottom: 16px;
-    left: 16px;              /* bottom-left like your screenshot */
-    z-index: 9999;
-    background: #000;
-    color: #fff;
-    border-radius: 999px;
-    padding: 8px 14px 8px 12px;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 13px;
-    cursor: pointer;
-    box-shadow: 0 10px 24px rgba(0,0,0,0.3);
-    user-select: none;
-  }
+    /* 🎵 Sticky MUSIC pill */
+    .music-toggle {
+      position: fixed;
+      bottom: 16px;
+      left: 16px;
+      z-index: 9999;
+      background: #000;
+      color: #fff;
+      border-radius: 999px;
+      padding: 8px 14px 8px 12px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      cursor: pointer;
+      box-shadow: 0 10px 24px rgba(0,0,0,0.3);
+      user-select: none;
+    }
 
-  .music-toggle span.icon {
-    font-size: 16px;
-    display: inline-flex;
-  }
+    .music-toggle span.icon {
+      font-size: 16px;
+      display: inline-flex;
+    }
 
-  .music-toggle span.label {
-    letter-spacing: 0.12em;
-    font-weight: 600;
-    text-transform: uppercase;
-  }
+    .music-toggle span.label {
+      letter-spacing: 0.12em;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
 
-  /* pulsing dots container */
-  .music-toggle .dots {
-    display: inline-flex;
-    gap: 3px;
-    margin-left: 2px;
-  }
+    /* pulsing dots container */
+    .music-toggle .dots {
+      display: inline-flex;
+      gap: 3px;
+      margin-left: 2px;
+    }
 
-  .music-toggle .dots span {
-    width: 4px;
-    height: 4px;
-    border-radius: 50%;
-    background: #fff;
-    opacity: 0.2;
-    animation: pulseDot 1.1s infinite ease-in-out;
-    animation-play-state: paused;
-  }
+    .music-toggle .dots span {
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: #fff;
+      opacity: 0.2;
+      animation: pulseDot 1.1s infinite ease-in-out;
+      animation-play-state: paused;
+    }
 
-  .music-toggle .dots span:nth-child(2) {
-    animation-delay: 0.15s;
-  }
+    .music-toggle .dots span:nth-child(2) {
+      animation-delay: 0.15s;
+    }
 
-  .music-toggle .dots span:nth-child(3) {
-    animation-delay: 0.3s;
-  }
+    .music-toggle .dots span:nth-child(3) {
+      animation-delay: 0.3s;
+    }
 
-  /* only animate when playing */
-  .music-toggle.is-playing .dots span {
-    animation-play-state: running;
-    opacity: 0.75;
-  }
+    /* only animate when playing */
+    .music-toggle.is-playing .dots span {
+      animation-play-state: running;
+      opacity: 0.75;
+    }
 
-  @keyframes pulseDot {
-    0%, 100% { transform: translateY(0); opacity: 0.25; }
-    50%      { transform: translateY(-3px); opacity: 1;   }
-  }
+    @keyframes pulseDot {
+      0%, 100% { transform: translateY(0); opacity: 0.25; }
+      50%      { transform: translateY(-3px); opacity: 1;   }
+    }
 
-  /* ⏭ skip button */
-  .music-skip {
-    border: none;
-    background: transparent;
-    color: #fff;
-    font-size: 16px;
-    display: inline-flex;
-    align-items: center;
-    padding: 0 0 0 4px;
-    cursor: pointer;
-  }
+    /* ⏭ skip button */
+    .music-skip {
+      border: none;
+      background: transparent;
+      color: #fff;
+      font-size: 16px;
+      display: inline-flex;
+      align-items: center;
+      padding: 0 4px 0 4px;
+      cursor: pointer;
+    }
 
-  .music-skip:focus {
-    outline: none;
-  }
-</style>
+    .music-skip:focus {
+      outline: none;
+    }
+  </style>
 </head>
 
 <body>
@@ -115,30 +115,44 @@
   <p>Ask AlanBot anything about my support work, projects, or process.</p>
 
   <!-- 🔊 Background music audio element -->
-  <!-- Replace song1.mp3 / song2.mp3 with your real file paths -->
   <audio id="bg-music" preload="auto"></audio>
 
-  <!-- 🎵 Sticky MUSIC toggle -->
+  <!-- 🎵 Sticky MUSIC pill (with animated dots + skip button) -->
   <div id="music-toggle" class="music-toggle">
     <span class="icon" id="music-icon">🔇</span>
     <span class="label">MUSIC</span>
+
+    <span class="dots" aria-hidden="true">
+      <span></span><span></span><span></span>
+    </span>
+
+    <button
+      id="music-skip"
+      class="music-skip"
+      type="button"
+      aria-label="Next track">
+      ⏭
+    </button>
   </div>
 
   <script>
-    // Simple playlist
+    // Playlist
     const playlist = [
       '/audio/song1.mp3',
       '/audio/song2.mp3',
       '/audio/song3.mp3'
     ];
 
-    const audioEl    = document.getElementById('bg-music');
-    const toggleEl   = document.getElementById('music-toggle');
-    const iconEl     = document.getElementById('music-icon');
-    let currentTrack = 0;
-    let musicOn      = false;
+    const audioEl     = document.getElementById('bg-music');
+    const toggleEl    = document.getElementById('music-toggle');
+    const iconEl      = document.getElementById('music-icon');
+    const skipBtn     = document.getElementById('music-skip');
+
+    let currentTrack  = 0;
+    let musicOn       = false;
 
     function loadTrack(index) {
+      if (!playlist.length) return;
       currentTrack = index % playlist.length;
       audioEl.src = playlist[currentTrack];
     }
@@ -150,10 +164,11 @@
       audioEl.play().then(() => {
         musicOn = true;
         iconEl.textContent = '🔊';
+        toggleEl.classList.add('is-playing');
       }).catch(() => {
-        // Browser blocked autoplay; user will have to tap the toggle again
         musicOn = false;
         iconEl.textContent = '🔇';
+        toggleEl.classList.remove('is-playing');
       });
     }
 
@@ -161,40 +176,42 @@
       audioEl.pause();
       musicOn = false;
       iconEl.textContent = '🔇';
+      toggleEl.classList.remove('is-playing');
     }
 
     function nextTrack() {
+      if (!playlist.length) return;
       loadTrack(currentTrack + 1);
       if (musicOn) {
         audioEl.play().catch(() => {
           musicOn = false;
           iconEl.textContent = '🔇';
+          toggleEl.classList.remove('is-playing');
         });
       }
     }
 
-    // Loop through playlist
-    audioEl.addEventListener('ended', () => {
+    // Auto-next when track ends
+    audioEl.addEventListener('ended', nextTrack);
+
+    // Click pill = play/pause
+    toggleEl.addEventListener('click', (event) => {
+      if (event.target === skipBtn) return; // skip button has its own handler
+      musicOn ? pauseMusic() : playMusic();
+    });
+
+    // Click skip ⏭
+    skipBtn.addEventListener('click', (event) => {
+      event.stopPropagation();
       nextTrack();
     });
 
-    // Toggle play/pause on click
-    toggleEl.addEventListener('click', () => {
-      if (musicOn) {
-        pauseMusic();
-      } else {
-        playMusic();
-      }
-    });
-
-    // Try to start quietly on first user interaction (autoplay rules)
+    // Start music after first click anywhere (autoplay rules)
     window.addEventListener('click', function initOnce() {
-      // Only attempt once, after the very first user click anywhere
-      if (!musicOn) {
-        playMusic();
-      }
+      if (!musicOn) playMusic();
       window.removeEventListener('click', initOnce);
     });
   </script>
+
 </body>
 </html>
