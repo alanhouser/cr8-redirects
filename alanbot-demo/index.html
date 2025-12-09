@@ -5,12 +5,31 @@
   <meta name="viewport" content="width=device-width" />
   <title>AlanBot Demo</title>
 
-  <!-- Chatbase Embed -->
-  <script src="https://www.chatbase.co/embed.min.js"
-    chatbotId="p_3L8r_Zfnj_PnD5M5xWT"
-    domain="www.chatbase.co"
-    defer>
-  </script>
+  <!-- Chatbase embed -->
+<script>
+  window.chatbaseConfig = {
+    chatbotId: "YOUR_BOT_ID",
+  }
+</script>
+<script src="https://www.chatbase.co/embed.min.js" id="YOUR_CHATBASE_SCRIPT_ID" defer></script>
+
+<!-- What day is tomorrow custom tool -->
+<script>
+  window.chatbase("onReady", () => {
+    window.chatbase("registerTools", {
+      getTomorrowDay: async () => {
+        const tomorrow = new Date();
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        const day = tomorrow.toLocaleDateString("en-US", { weekday: "long" });
+
+        return {
+          status: "success",
+          data: { tomorrow_day: day }
+        };
+      }
+    });
+  });
+</script>
 
   <style>
     body {
