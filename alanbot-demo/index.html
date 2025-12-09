@@ -10,7 +10,7 @@
     chatbotId="p_3L8r_Zfnj_PnD5M5xWT"
     domain="www.chatbase.co"
     defer>
-  </script>
+  ></script>
 
   <style>
     body {
@@ -35,19 +35,19 @@
       background: #000;
       color: #fff;
       border-radius: 999px;
-      padding: 8px 14px 8px 12px;
+      padding: 8px 16px 8px 12px;
       display: inline-flex;
       align-items: center;
       gap: 8px;
       font-size: 13px;
-      cursor: pointer;
       box-shadow: 0 10px 24px rgba(0,0,0,0.3);
       user-select: none;
     }
 
     .music-toggle span.icon {
-      font-size: 16px;
+      font-size: 18px;
       display: inline-flex;
+      cursor: pointer; /* speaker is clickable (mute/unmute) */
     }
 
     .music-toggle span.label {
@@ -92,20 +92,34 @@
       50%      { transform: translateY(-3px); opacity: 1;   }
     }
 
-    /* ⏭ skip button */
-    .music-skip {
+    /* Controls: play/pause + next */
+    .music-controls {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      margin-left: 6px;
+      font-size: 14px;
+    }
+
+    .music-btn {
       border: none;
       background: transparent;
       color: #fff;
-      font-size: 16px;
+      font-size: 15px;
       display: inline-flex;
       align-items: center;
-      padding: 0 4px 0 4px;
+      padding: 0;
       cursor: pointer;
     }
 
-    .music-skip:focus {
+    .music-btn:focus {
       outline: none;
+    }
+
+    .music-divider {
+      opacity: 0.4;
+      font-size: 14px;
+      user-select: none;
     }
   </style>
 </head>
@@ -117,22 +131,33 @@
   <!-- 🔊 Background music audio element -->
   <audio id="bg-music" preload="auto"></audio>
 
-  <!-- 🎵 Sticky MUSIC pill (with animated dots + skip button) -->
+  <!-- 🎵 Sticky MUSIC pill with speaker, dots, play/pause, and next -->
   <div id="music-toggle" class="music-toggle">
-    <span class="icon" id="music-icon">🔇</span>
+    <span class="icon" id="music-icon" title="Mute / unmute">🔇</span>
+
     <span class="label">MUSIC</span>
 
     <span class="dots" aria-hidden="true">
       <span></span><span></span><span></span>
     </span>
 
-    <button
-      id="music-skip"
-      class="music-skip"
-      type="button"
-      aria-label="Next track">
-      ⏭
-    </button>
+    <div class="music-controls">
+      <button
+        id="music-playpause"
+        class="music-btn"
+        type="button"
+        aria-label="Pause or play">
+        ▶
+      </button>
+      <span class="music-divider">|</span>
+      <button
+        id="music-skip"
+        class="music-btn"
+        type="button"
+        aria-label="Next track">
+        ⏭
+      </button>
+    </div>
   </div>
 
   <script>
@@ -143,18 +168,32 @@
       '/audio/song3.mp3'
     ];
 
-    const audioEl     = document.getElementById('bg-music');
-    const toggleEl    = document.getElementById('music-toggle');
-    const iconEl      = document.getElementById('music-icon');
-    const skipBtn     = document.getElementById('music-skip');
+    const audioEl       = document.getElementById('bg-music');
+    const pillEl        = document.getElementById('music-toggle');
+    const speakerEl     = document.getElementById('music-icon');
+    const playPauseBtn  = document.getElementById('music-playpause');
+    const skipBtn       = document.getElementById('music-skip');
 
-    let currentTrack  = 0;
-    let musicOn       = false;
+    let currentTrack = 0;
+    let musicOn      = false; // playing state
 
     function loadTrack(index) {
       if (!playlist.length) return;
-      currentTrack = index % playlist.length;
+      currentTrack = index % playlist.length; // 3 -> 0
       audioEl.src = playlist[currentTrack];
+    }
+
+    function updateSpeakerIcon() {
+      if (musicOn && !audioEl.muted) {
+        speakerEl.textContent = '🔊';
+      } else {
+        speakerEl.textContent = '🔇';
+      }
+    }
+
+    function updatePlayPauseIcon() {
+      // ⏸ when playing, ▶ when paused/stopped
+      playPauseBtn.textContent = musicOn ? '⏸' : '▶';
     }
 
     function playMusic() {
@@ -163,20 +202,27 @@
 
       audioEl.play().then(() => {
         musicOn = true;
-        iconEl.textContent = '🔊';
-        toggleEl.classList.add('is-playing');
+        pillEl.classList.add('is-playing');
+        updatePlayPauseIcon();
+        updateSpeakerIcon();
       }).catch(() => {
         musicOn = false;
-        iconEl.textContent = '🔇';
-        toggleEl.classList.remove('is-playing');
+        pillEl.classList.remove('is-playing');
+        updatePlayPauseIcon();
+        updateSpeakerIcon();
       });
     }
 
     function pauseMusic() {
       audioEl.pause();
       musicOn = false;
-      iconEl.textContent = '🔇';
-      toggleEl.classList.remove('is-playing');
+      pillEl.classList.remove('is-playing');
+      updatePlayPauseIcon();
+      updateSpeakerIcon();
+    }
+
+    function togglePlayPause() {
+      musicOn ? pauseMusic() : playMusic();
     }
 
     function nextTrack() {
@@ -185,25 +231,36 @@
       if (musicOn) {
         audioEl.play().catch(() => {
           musicOn = false;
-          iconEl.textContent = '🔇';
-          toggleEl.classList.remove('is-playing');
+          pillEl.classList.remove('is-playing');
+          updatePlayPauseIcon();
+          updateSpeakerIcon();
         });
       }
+    }
+
+    // Speaker = mute / unmute
+    function toggleMute() {
+      audioEl.muted = !audioEl.muted;
+      updateSpeakerIcon();
     }
 
     // Auto-next when track ends
     audioEl.addEventListener('ended', nextTrack);
 
-    // Click pill = play/pause
-    toggleEl.addEventListener('click', (event) => {
-      if (event.target === skipBtn) return; // skip button has its own handler
-      musicOn ? pauseMusic() : playMusic();
+    // Button handlers
+    playPauseBtn.addEventListener('click', (event) => {
+      event.stopPropagation();
+      togglePlayPause();
     });
 
-    // Click skip ⏭
     skipBtn.addEventListener('click', (event) => {
       event.stopPropagation();
       nextTrack();
+    });
+
+    speakerEl.addEventListener('click', (event) => {
+      event.stopPropagation();
+      toggleMute();
     });
 
     // Start music after first click anywhere (autoplay rules)
@@ -211,6 +268,10 @@
       if (!musicOn) playMusic();
       window.removeEventListener('click', initOnce);
     });
+
+    // Initialize icons on load
+    updatePlayPauseIcon();
+    updateSpeakerIcon();
   </script>
 
 </body>
