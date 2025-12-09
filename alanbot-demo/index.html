@@ -9,7 +9,7 @@
   <script src="https://www.chatbase.co/embed.min.js"
     chatbotId="p_3L8r_Zfnj_PnD5M5xWT"
     domain="www.chatbase.co"
-    defer>
+    defer
   ></script>
 
   <style>
@@ -24,7 +24,7 @@
     }
 
     h1 { font-size: 28px; }
-    p  { margin-bottom: 20px; }
+    p  { margin-bottom: 16px; }
 
     /* 🎵 Sticky MUSIC pill */
     .music-toggle {
@@ -47,7 +47,7 @@
     .music-toggle span.icon {
       font-size: 18px;
       display: inline-flex;
-      cursor: pointer; /* speaker is clickable (mute/unmute) */
+      cursor: pointer;
     }
 
     .music-toggle span.label {
@@ -81,7 +81,6 @@
       animation-delay: 0.3s;
     }
 
-    /* only animate when playing */
     .music-toggle.is-playing .dots span {
       animation-play-state: running;
       opacity: 0.75;
@@ -92,7 +91,6 @@
       50%      { transform: translateY(-3px); opacity: 1;   }
     }
 
-    /* Controls: play/pause + next */
     .music-controls {
       display: inline-flex;
       align-items: center;
@@ -126,7 +124,16 @@
 
 <body>
   <h1>Welcome to AlanBot 👋</h1>
-  <p>Ask AlanBot anything about my support work, projects, or process.</p>
+
+  <p>
+    This is a quick demo page to test AlanBot — a chatbot trained on my work, my projects, and my general problem-solving brain.
+  </p>
+  <p>
+    Ask it anything about my UX work, support background, design processes, résumé details, or projects. Go ahead — give it a try!
+  </p>
+  <p>
+    (The chat bubble should appear in the corner.)
+  </p>
 
   <!-- 🔊 Background music audio element -->
   <audio id="bg-music" preload="auto"></audio>
@@ -161,7 +168,6 @@
   </div>
 
   <script>
-    // Playlist
     const playlist = [
       '/audio/song1.mp3',
       '/audio/song2.mp3',
@@ -175,11 +181,11 @@
     const skipBtn       = document.getElementById('music-skip');
 
     let currentTrack = 0;
-    let musicOn      = false; // playing state
+    let musicOn      = false;
 
     function loadTrack(index) {
       if (!playlist.length) return;
-      currentTrack = index % playlist.length; // 3 -> 0
+      currentTrack = index % playlist.length;
       audioEl.src = playlist[currentTrack];
     }
 
@@ -192,7 +198,6 @@
     }
 
     function updatePlayPauseIcon() {
-      // ⏸ when playing, ▶ when paused/stopped
       playPauseBtn.textContent = musicOn ? '⏸' : '▶';
     }
 
@@ -238,16 +243,13 @@
       }
     }
 
-    // Speaker = mute / unmute
     function toggleMute() {
       audioEl.muted = !audioEl.muted;
       updateSpeakerIcon();
     }
 
-    // Auto-next when track ends
     audioEl.addEventListener('ended', nextTrack);
 
-    // Button handlers
     playPauseBtn.addEventListener('click', (event) => {
       event.stopPropagation();
       togglePlayPause();
@@ -263,13 +265,11 @@
       toggleMute();
     });
 
-    // Start music after first click anywhere (autoplay rules)
     window.addEventListener('click', function initOnce() {
       if (!musicOn) playMusic();
       window.removeEventListener('click', initOnce);
     });
 
-    // Initialize icons on load
     updatePlayPauseIcon();
     updateSpeakerIcon();
   </script>
